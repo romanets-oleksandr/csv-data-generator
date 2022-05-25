@@ -1,0 +1,46 @@
+{% extends "schema_base.html" %}
+
+{% block title %} Schemas {% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="columns">
+        <div class="column is-one-quarter">
+            Data schemas
+        </div>
+        <div class="column"></div>
+        <div class="column is-one-quarter">
+            <a class="button is-primary" href="{% url 'schema' %}">New schema</a>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
+            <div class="table-container">
+              <table class="table">
+                  <thead>
+                      <tr>
+                          <th>#</th>
+                          <th>Title</th>
+                          <th>Modified</th>
+                          <th>Actions</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    {% for schema in schemas %}
+                    <tr>
+                        <td>{{ schema.id }}</td>
+                        <td><a href="{% url 'view_schema' schema.id %}" class="button is-info is-inverted">{{ schema.name }}</a></td>
+                        <td>{{ schema.modified }}</td>
+                        <td>
+                            <a href="{% url 'schema' schema.id %}" class="button is-info is-inverted">Edit</a>
+                            <a href="{% url 'delete_schema' schema.id %}" onclick="return confirm('Are you sure?')" class="button is-danger is-inverted">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+              </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,26 @@
+{% extends "layout/base.html" %}
+
+{% block nav %}
+<nav class="navbar is-light" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="/">
+      Fake CSV
+    </a>
+  </div>
+
+  <div class="navbar-menu">
+    <a class="navbar-item">
+      Schemas
+    </a>
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <div class="buttons">
+          <a href="{% url 'logout' %}" class="button is-light">
+            Log out
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+{% endblock nav %}
