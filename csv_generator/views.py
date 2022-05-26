@@ -2,12 +2,12 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 
 from .models import Schema
-from .forms import SchemaForm, ColumnsFormSet
+from .forms import SchemaModelForm, ColumnFormset
 
 
 @login_required
 def schemas(request):
-    schemas_ = Schema.objects.order_by('-modified')
+    schemas_ = Schema.objects.order_by('pk')
     return render(
         request,
         "schemas.html",
@@ -21,21 +21,26 @@ def schemas(request):
 def schema(request, schema_id=None):
     schema_ = get_object_or_404(Schema, pk=schema_id) if schema_id else None
     if request.method == 'POST':
-        form = SchemaForm(request.POST)
-        formset = ColumnsFormSet(request.POST)
-        if form.is_valid() and formset.is_valid():
-            pass
+        schema_form = SchemaModelForm(request.POST)
+        column_formset = ColumnFormset(request.POST)
+        if schema_form.is_valid() and column_formset.is_valid():
+            schema_ = schema_form.save()
+            for form in column_formset:
+                column = form.save(commit=False)
+                column.schema = schema_
+                column.save()
+            return redirect('schemas')
     else:
-        form = SchemaForm()
-        formset = ColumnsFormSet()
+        schema_form = SchemaModelForm(instance=schema_)
+        column_formset = ColumnFormset(queryset=schema_.column_set.all() if schema_ else None)
 
     return render(
         request,
         "schema.html",
         {
             "schema": schema_,
-            "form": form,
-            "formset": formset,
+            "schema_form": schema_form,
+            "column_formset": column_formset,
         }
     )
 

@@ -25,9 +25,9 @@
                 <div class="columns">
                     <div class="column is-half">
                         <div class="field">
-                            <label class="label">{{ form.name.label }}</label>
+                            <label class="label">{{ schema_form.name.label }}</label>
                             <div class="control">
-                                {{ form.name }}
+                                {{ schema_form.name }}
                             </div>
                         </div>
                     </div>
@@ -37,29 +37,37 @@
                     <div class="column">
                         <p>Schema columns</p>
 
-                        {{ formset.management_form }}
-                        {% for col in formset %}
-                        <div class="field is-horizontal schema_column">
-                          <div class="field-body">
-                            <div class="field">
-                                <label class="label">{{ col.order.label }}</label>
-                              <p class="control is-expanded">
-                                {{ col.order }}
-                              </p>
+                        {{ column_formset.management_form }}
+                        {% for col in column_formset %}
+                            {% for hidden in col.hidden_fields %}
+                                {{ hidden }}
+                            {% endfor %}
+                        <div class="columns schema_column">
+                            <div class="column is-one-quarter">
+                                <div class="field">
+                                    <label class="label">{{ col.order.label }}</label>
+                                  <p class="control is-expanded">
+                                    {{ col.order }}
+                                  </p>
+                                </div>
                             </div>
-                            <div class="field">
+                            <div class="column is-one-quarter">
+                                <div class="field">
                                 <label class="label">{{ col.name.label }}</label>
                               <p class="control is-expanded">
                                 {{ col.name }}
                               </p>
                             </div>
-                            <div class="field">
-                                <label class="label">{{ col.data_type.label }}</label>
-                              <p class="control is-expanded">
-                                {{ col.data_type }}
-                              </p>
                             </div>
-                          </div>
+                            <div class="column is-one-quarter">
+                                <div class="field">
+                                <label class="label">{{ col.data_type.label }}</label>
+                                <div class="select">{{ col.data_type }}</div>
+                            </div>
+                            </div>
+                            <div class="column is-one-quarter">
+                                <input type="button" value="Delete" class="button is-danger is-inverted del_column">
+                            </div>
                         </div>
                         {% endfor %}
 
@@ -74,16 +82,42 @@
 
 {% block javascripts %}
 <script>
-    function cloneColumn(selector, type) {
+    function cloneColumn(selector) {
+        var totalId = '#id_form-TOTAL_FORMS';
+        var total = $(totalId).val();
+
         var newColumn = $(selector).clone(true);
         newColumn.find(':input').each(function() {
-            $(this).val('');
+            var name = $(this).attr('name').replace('-' + (total-1) + '-','-' + total + '-');
+            var id = 'id_' + name;
+            $(this).attr({'name': name, 'id': id}).val('');
         });
+
+        total++;
+        $(totalId).val(total);
         $(selector).after(newColumn);
+    }
+
+    function deleteColumn(btn) {
+        var confirmed =  confirm('Are you sure?');
+        if (!confirmed) return false;
+
+        var totalId = '#id_form-TOTAL_FORMS';
+        var total = $(totalId).val();
+
+        if (total > 1){
+            btn.closest('div.schema_column').remove();
+            var columns = $('div.schema_column');
+            $(totalId).val(columns.length);
+        }
+        return false;
     }
 
     $('#add_column').click(function() {
         cloneColumn('div.schema_column:last');
+    });
+    $('.del_column').click(function() {
+        deleteColumn($(this));
     });
 </script>
 {% endblock javascripts %}
