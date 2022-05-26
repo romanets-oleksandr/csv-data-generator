@@ -3,3 +3,5 @@ gunicorn
 django-heroku
 redis
 celery
+django-storages
+boto3
