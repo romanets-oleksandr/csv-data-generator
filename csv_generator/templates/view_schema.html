@@ -1,0 +1,122 @@
+{% extends "schema_base.html" %}
+
+{% block title %} Schema {% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="columns">
+        <form id="generate" method="POST" action="">
+            {% csrf_token %}
+            {{ form.schema_id }}
+            <div class="columns">
+                <div class="column is-one-quarter">
+                    <p>Data sets</p>
+                </div>
+                <div class="field is-horizontal">
+                  <div class="field-label is-normal">
+                    <label class="label">Rows</label>
+                  </div>
+                  <div class="field-body">
+                    <div class="field">
+                      <p class="control is-expanded">
+                        {{ form.records }}
+                      </p>
+                    </div>
+                    <div class="field">
+                      <p class="control is-expanded">
+                          <button type="submit" class="button is-success">Generate</button>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="columns">
+        <div class="column">
+            <div class="table-container">
+              <table class="table">
+                  <thead>
+                      <tr>
+                          <th>#</th>
+                          <th>Created</th>
+                          <th>Status</th>
+                          <th>Actions</th>
+                      </tr>
+                  </thead>
+                  <tbody id="tasks">
+                    {% for ds in data_sets %}
+                    <tr>
+                        <td>{{ ds.id }}</td>
+                        <td>{{ ds.created }}</td>
+                        <td>
+                            <span class="tag is-success">Ready</span>
+                        </td>
+                        <td><a href="{{ ds.csv_file.url }}" class="button is-info is-inverted">Download</a></td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+              </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script>
+    const generateCSVURL = "{% url 'generate_csv' schema.id %}";
+    const taskStatusURL = "{% url 'get_task_status' %}";
+    var generateForm = $('#generate');
+
+    generateForm.submit(function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: generateCSVURL,
+            data: generateForm.serialize(),
+            success: function (response) {
+                const html = `
+                    <tr id="${response.task_id}">
+                        <td></td>
+                        <td>Just now</td>
+                        <td>
+                            <span class="tag is-light">Processing</span>
+                        </td>
+                        <td></td>
+                    </tr>`
+                $('#tasks').append(html);
+                getStatus(response.task_id);
+            },
+            error: function (data) {
+                console.error(data);
+            },
+        })
+    });
+
+    function getStatus(taskID) {
+        $.ajax({
+            url: `${taskStatusURL}${taskID}`,
+            method: 'GET'
+        })
+        .done((response) => {
+            const taskStatus = response.task_status;
+            if (taskStatus === 'SUCCESS'){
+                var row = $(`#${taskID}`);
+                console.log(row)
+                row.find('.tag').removeClass("is-light").addClass("is-success").html("Ready");
+                row.find('td:last-child').html('<a href="' + response.task_result + '" class="button is-info is-inverted">Download</a>')
+            } else if (taskStatus === 'FAILURE') {
+                $(`#${taskID}.tag`).removeClass("is-light").addClass("is-danger").html("Fail");
+            } else {
+                setTimeout(function() {
+                    getStatus(res.task_id);
+                }, 1000);
+            }
+        })
+        .fail((err) => {
+            console.log(err)
+        });
+    }
+</script>
+{% endblock javascripts %}

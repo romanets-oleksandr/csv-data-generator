@@ -8,7 +8,7 @@ _types = {
 
 
 def get_data_type(name: str) -> DataType:
-    return _types[name]
+    return _types[name]()
 
 
 def get_choices() -> list[tuple]:

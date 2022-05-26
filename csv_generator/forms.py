@@ -43,3 +43,7 @@ ColumnFormset = modelformset_factory(
         ),
     }
 )
+
+
+class DataSetForm(forms.Form):
+    records = forms.IntegerField(widget=forms.NumberInput(attrs={"class": "input"}))
