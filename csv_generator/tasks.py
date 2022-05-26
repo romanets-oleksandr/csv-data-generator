@@ -2,10 +2,8 @@ import io
 import csv
 from uuid import uuid4
 
-from django.conf import settings
 from django.core.files.base import ContentFile
 from celery import shared_task
-from celery.contrib import rdb
 
 from .models import Schema, DataSet
 from . import data_type
@@ -33,7 +31,7 @@ def generate_csv_task(schema_id, records):
     data_set = DataSet(
         schema=schema,
     )
-    data_set.csv_file.save(f'{schema}-{uuid4()}.csv', ContentFile(csv_content.read()))
+    data_set.csv_file.save(f'Schema-{schema.id}-{uuid4()}.csv', ContentFile(csv_content.read()))
     data_set.save()
     return data_set.csv_file.url
 
