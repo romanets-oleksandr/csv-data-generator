@@ -110,7 +110,7 @@
                 $(`#${taskID}.tag`).removeClass("is-light").addClass("is-danger").html("Fail");
             } else {
                 setTimeout(function() {
-                    getStatus(res.task_id);
+                    getStatus(response.task_id);
                 }, 1000);
             }
         })
