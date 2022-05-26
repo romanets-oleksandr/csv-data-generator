@@ -1,1 +1,1 @@
-from .full_name import FullName
+from .full_name import FullNameGenerator

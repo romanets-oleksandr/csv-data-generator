@@ -29,11 +29,11 @@
                     {% for schema in schemas %}
                     <tr>
                         <td>{{ schema.id }}</td>
-                        <td><a href="{% url 'view_schema' schema.id %}" class="button is-info is-inverted">{{ schema.name }}</a></td>
-                        <td>{{ schema.modified }}</td>
+                        <td><a href="{% url 'view_schema' schema.id %}" class="is-info">{{ schema.name }}</a></td>
+                        <td>{{ schema.modified | date:"Y-m-d" }}</td>
                         <td>
-                            <a href="{% url 'schema' schema.id %}" class="button is-info is-inverted">Edit</a>
-                            <a href="{% url 'delete_schema' schema.id %}" onclick="return confirm('Are you sure?')" class="button is-danger is-inverted">Delete</a>
+                            <a href="{% url 'schema' schema.id %}" class="tag is-link is-info">Edit</a>
+                            <a href="{% url 'delete_schema' schema.id %}" onclick="return confirm('Are you sure?')" class="tag is-link is-danger">Delete</a>
                         </td>
                     </tr>
                     {% endfor %}

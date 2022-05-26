@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY", "#")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -58,8 +58,8 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'core.urls'
 
 LOGIN_URL = 'login/'
-LOGIN_REDIRECT_URL = 'index'
-LOGOUT_REDIRECT_URL = 'index'
+LOGIN_REDIRECT_URL = 'schemas'
+LOGOUT_REDIRECT_URL = 'schemas'
 
 TEMPLATES = [
     {

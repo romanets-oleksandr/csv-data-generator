@@ -48,11 +48,11 @@
                     {% for ds in data_sets %}
                     <tr>
                         <td>{{ ds.id }}</td>
-                        <td>{{ ds.created }}</td>
+                        <td>{{ ds.created | date:"Y-m-d" }}</td>
                         <td>
                             <span class="tag is-success">Ready</span>
                         </td>
-                        <td><a href="{{ ds.csv_file.url }}" class="button is-info is-inverted">Download</a></td>
+                        <td><a href="{{ ds.csv_file.url }}" class="tag is-link is-light">Download</a></td>
                     </tr>
                     {% endfor %}
                   </tbody>
@@ -105,7 +105,7 @@
                 var row = $(`#${taskID}`);
                 console.log(row)
                 row.find('.tag').removeClass("is-light").addClass("is-success").html("Ready");
-                row.find('td:last-child').html('<a href="' + response.task_result + '" class="button is-info is-inverted">Download</a>')
+                row.find('td:last-child').html('<a href="' + response.task_result + '" class="tag is-link is-light">Download</a>')
             } else if (taskStatus === 'FAILURE') {
                 $(`#${taskID}.tag`).removeClass("is-light").addClass("is-danger").html("Fail");
             } else {

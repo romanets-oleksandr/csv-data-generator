@@ -15,7 +15,7 @@ def generate_csv_task(schema_id, records):
 
     columns = schema.column_set.order_by('order').all()
     header = [c.name for c in columns]
-    generators = [data_type.get_data_type(c.data_type) for c in columns]
+    generators = [data_type.get_generator(c) for c in columns]
 
     csv_content = io.BytesIO()
     buffer = io.TextIOWrapper(csv_content, 'utf-8', newline='')
@@ -34,6 +34,3 @@ def generate_csv_task(schema_id, records):
     data_set.csv_file.save(f'Schema-{schema.id}-{uuid4()}.csv', ContentFile(csv_content.read()))
     data_set.save()
     return data_set.csv_file.url
-
-
-

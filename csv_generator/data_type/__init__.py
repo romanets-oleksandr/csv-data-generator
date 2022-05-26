@@ -1,14 +1,22 @@
-from .base import DataType
-from .full_name import FullName
+from .base import DataTypeGenerator
+from .full_name import FullNameGenerator
+from .job import JobGenerator
+from .date import DateGenerator
+from .integer import IntegerGenerator
+from .email import EmailGenerator
 
 
 _types = {
-    'Full name': FullName
+    'Full name': FullNameGenerator,
+    'Job': JobGenerator,
+    'Date': DateGenerator,
+    'Integer': IntegerGenerator,
+    'Email': EmailGenerator
 }
 
 
-def get_data_type(name: str) -> DataType:
-    return _types[name]()
+def get_generator(column) -> DataTypeGenerator:
+    return _types[column.data_type](column)
 
 
 def get_choices() -> list[tuple]:
